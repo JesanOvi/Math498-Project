@@ -19,19 +19,42 @@ class ModelConfig:
 
 @dataclass
 class TrainingConfig:
-    def __init__(self, batch_size, epochs, lr):
+    def __init__(self, batch_size, epochs, lr, tokenizer):
         self.batch_size = batch_size
         self.epochs = epochs
         self.lr = lr
+        self.tokenizer = tokenizer
+
+# @dataclass
+# class SAEConfig:
+#     input_dim: int
+#     hidden_dim: int
+#     lambda_l1: float
+#     batch_size: int
+#     epochs: int
+#     model: any
+#     loader: any
+#     max_sample: int
+#     device: any
+
+@dataclass
+class gemmaConfig:
+    gemma_name: any
+    rel: any
+    sae_id: any
+    batch_size: int
+    texts: any
+    device: any
+
+
+
 
 @dataclass
 class SAEConfig:
-    input_dim: int
-    hidden_dim: int
-    lambda_l1: float
+    model_name: str
+    sae_release: str
+    sae_id: str
+    layer: int
     batch_size: int
-    epochs: int
-    model: any
-    loader: any
-    max_sample: int
-    device: any
+    texts: list
+    device: str

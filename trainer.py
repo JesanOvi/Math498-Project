@@ -3,11 +3,12 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
 class Trainer:
-    def __init__(self, model, optimizer, device, datasetcon):
+    def __init__(self, model, optimizer, device, datasetcon, trainconfig):
         self.model = model
         self.optimizer = optimizer
         self.device = device
         self.config = datasetcon
+        self.trainconfig = trainconfig
         self.losses = []
 
     def train(self, loader, epochs):
@@ -62,3 +63,29 @@ class Trainer:
 
         cm = confusion_matrix(labels, preds)
         print("Confusion Matrix:\n", cm)
+
+    def get_bert_predictions(self, texts):
+        preds = []
+        self.model.eval()
+        for i in range(0, len(texts), self.trainconfig.batch_size):
+            batch = texts[i:i+self.trainconfig.batch_size]
+
+            inputs = self.trainconfig.tokenizer(
+                batch,
+                padding=True,
+                truncation=True,
+                max_length=self.config.max_length,
+                return_tensors="pt"
+            ).to(self.device)
+
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+
+            logits = outputs.logits
+            pred = torch.argmax(logits, dim=1)
+
+            preds.extend(pred.cpu().numpy())
+
+        return torch.tensor(preds)
+
+    #Y = get_bert_predictions(texts)

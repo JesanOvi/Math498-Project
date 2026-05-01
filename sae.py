@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import torch
 from tqdm import tqdm
 from torch.utils.data import DataLoader, TensorDataset
+import matplotlib.pyplot as plt
 
 class SparseAutoencoder(nn.Module):
     def __init__(self, config):
@@ -74,7 +75,7 @@ class trainsae:
         self.config = config
     
     def train_sae(self):
-
+        lossess = []
         sae = SparseAutoencoder(self.config).to(self.config.device)
         hs = hiddenstates(self.config.device, self.config.model.model, self.config.loader, self.config.max_sample)
         H, Y = hs.extract_hidden_states()
@@ -104,8 +105,12 @@ class trainsae:
                 optimizer.step()
 
                 total_loss += loss.item()
+            avg_loss = total_loss/len(loader)
+            lossess.append(avg_loss)
+            print(f"Epoch {epoch}: Loss {avg_loss:.4f}")
 
-            print(f"Epoch {epoch}: Loss {total_loss:.4f}")
-
+        plt.plot(lossess)
+        plt.title("Training Loss for SAE")
+        plt.show()
         return sae, H_norm, Y
     

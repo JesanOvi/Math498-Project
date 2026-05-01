@@ -14,7 +14,7 @@ def get_feature_activations(sae, H_norm, device):
     return Z.cpu()
 
 
-def compute_feature_importance(Z, Y):
+def compute_feature_importance(Z, Y): # variance: Does feature differ across classes?
     unique_labels = torch.unique(Y)
 
     feature_stats = {}
@@ -34,7 +34,7 @@ def get_top_features(importance, k=10):
     topk = torch.topk(importance, k=k)
     return topk.indices
 
-def compute_ttest(Z, Y):
+def compute_ttest(Z, Y): # Is difference statistically significant?
     labels = torch.unique(Y)
     assert len(labels) == 2, "binary only"
 
@@ -49,7 +49,7 @@ def compute_ttest(Z, Y):
 
     return torch.tensor(p_values)
 
-def compute_logistic_importance(Z, Y):
+def compute_logistic_importance(Z, Y): # Is feature predictive?
     Z_np = Z.numpy()
     Y_np = Y.numpy()
 
